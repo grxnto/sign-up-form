@@ -8,7 +8,7 @@ body {
 
 }
 #scene-container {
-    width: 45em;
+    width: 48em;
     height: 100vh;
     background-color: black;
     display:flex;

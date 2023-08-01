@@ -1,8 +1,100 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 function createIcosahedron() {
+  const geometry = new THREE.IcosahedronGeometry(0.07, 0);
+  const material = new THREE.MeshStandardMaterial( {
+    metalness: 1,   // between 0 and 1
+    roughness: 0.35, // between 0 and 1
+  } );
+  const icosahedron = new THREE.Mesh(geometry, material);
+  icosahedron.position.set(0.25, 0.2, -0.2);
+  const radiansPerSecond = THREE.MathUtils.degToRad(15);
+  icosahedron.tick = (delta) => {
+    icosahedron.rotation.z += radiansPerSecond * delta;
+    icosahedron.rotation.x += radiansPerSecond * delta;
+    icosahedron.rotation.y += radiansPerSecond * delta;
+  };
+  icosahedron.update = (time) => {
+    icosahedron.position.y = Math.cos( time ) * 0.02 + 0.2;
+  };
   
+  
+  return icosahedron;
+}
+
+function createTorus() {
+  const geometry = new THREE.TorusGeometry();
+  const material = new THREE.MeshStandardMaterial( {
+    metalness: 1,   // between 0 and 1
+    roughness: 0.35, // between 0 and 1
+  } );
+  const torus = new THREE.Mesh(geometry, material);
+  torus.scale.set(0.06, 0.06, 0.06);
+  torus.rotation.x = THREE.MathUtils.degToRad(-30);
+  torus.rotation.y = THREE.MathUtils.degToRad(-20);
+  torus.rotation.z = THREE.MathUtils.degToRad(30);
+  torus.position.set(-0.2, 0.23, 0.2);
+  torus.update = (time) => {
+    torus.position.y = Math.cos( time ) * 0.03 + 0.2;
+  };
+  return torus;
+}
+
+function createSphere() {
+  const geometry = new THREE.SphereGeometry();
+  const material = new THREE.MeshStandardMaterial( {
+    metalness: 1,   // between 0 and 1
+    roughness: 0.35, // between 0 and 1
+  } );
+  const sphere = new THREE.Mesh(geometry, material);
+  sphere.scale.set(0.08, 0.08, 0.08);
+  sphere.position.set(-0.1, 0.5, -0.3);
+  sphere.update = (time) => {
+    sphere.position.y = Math.sin( time ) * 0.02 + 0.2;
+  };
+  return sphere;
+}
+
+function createDodecahedron() {
+  const geometry = new THREE.DodecahedronGeometry();
+  const material = new THREE.MeshStandardMaterial( {
+    metalness: 1,   // between 0 and 1
+    roughness: 0.35, // between 0 and 1
+  } );
+  const dodecahedron = new THREE.Mesh(geometry, material);
+  dodecahedron.scale.set(0.05, 0.05, 0.05);
+  dodecahedron.rotation.x = THREE.MathUtils.degToRad(-30);
+  dodecahedron.rotation.y = THREE.MathUtils.degToRad(-20);
+  dodecahedron.position.set(-0.15, -0.34, 0.3);
+  const radiansPerSecond = THREE.MathUtils.degToRad(15);
+  dodecahedron.tick = (delta) => {
+    dodecahedron.rotation.z += radiansPerSecond * delta;
+    dodecahedron.rotation.x -= radiansPerSecond * delta;
+    dodecahedron.rotation.y -= radiansPerSecond * delta;
+  };
+  dodecahedron.update = (time) => {
+    dodecahedron.position.y = Math.sin( time ) * 0.03 - 0.17;
+  };
+  return dodecahedron;
+}
+
+function createControls(camera, canvas) {
+  const controls = new OrbitControls(camera, canvas);
+
+  // damping and auto rotation require
+  // the controls to be updated each frame
+
+  // this.controls.autoRotate = true;
+  controls.enableDamping = true;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 1;
+  controls.minDistance = 1.7;
+  controls.maxDistance = 1.7;
+  controls.tick = () => controls.update();
+
+  return controls;
 }
 
 async function loadModel() {
@@ -53,8 +145,6 @@ function createScene() {
 
 function createRenderer() {
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-  
-    renderer.useLegacyLights = true;
     return renderer;
 }
 
@@ -66,12 +156,14 @@ class Loop {
     this.scene = scene;
     this.renderer = renderer;
     this.updatables = [];
+    this.updatables2 = [];
   }
 
   start() {
     this.renderer.setAnimationLoop(() => {
       // tell every animated object to tick forward one frame
       this.tick();
+      this.update();
 
       // render a frame
       this.renderer.render(this.scene, this.camera);
@@ -80,6 +172,13 @@ class Loop {
 
   stop() {
     this.renderer.setAnimationLoop(null);
+  }
+
+  update() {
+    const time = clock.getElapsedTime();
+    for (const object of this.updatables2) {
+      object.update(time);
+    }
   }
 
   tick() {
@@ -126,8 +225,15 @@ class World {
       scene = createScene();
       loop = new Loop(camera, scene, renderer);
       container.append(renderer.domElement);
+      const controls = createControls(camera, renderer.domElement);
       const light = createLights();
-      scene.add(light);
+      const icosahedron = createIcosahedron();
+      const torus = createTorus();
+      const dodecahedron = createDodecahedron();
+      const sphere = createSphere();
+      loop.updatables.push(icosahedron, dodecahedron, controls);
+      loop.updatables2.push(icosahedron, torus, dodecahedron, sphere);
+      scene.add(light, icosahedron, torus, dodecahedron, sphere);
       const resizer = new Resizer(container, camera, renderer);
     }
     async initial() {
