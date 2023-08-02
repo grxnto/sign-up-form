@@ -58,7 +58,7 @@ function createSphere() {
     sphere.position.y = Math.sin( time ) * 0.02 + 0.2;
   };
   sphere.castShadow = true;
-  sphere.receiveShadow = false;
+  sphere.receiveShadow = true;
   return sphere;
 }
 
@@ -117,7 +117,7 @@ async function loadModel() {
   globe.tick = (delta) => {
     globe.rotation.z += radiansPerSecond * delta;
   };
-  globe.castShadow = false;
+  globe.castShadow = true;
   globe.receiveShadow = true;
   return globe;
 }
@@ -151,6 +151,24 @@ function createAmbientLights() {
   const ambientlight = new THREE.AmbientLight( 0x404040, 2.5 ); // soft white light
   return ambientlight;
 }
+
+function createSpotlights() {
+  const spotlight1 = new THREE.SpotLight(0x42a1d4, 3);
+  spotlight1.position.set(0.25, 0.2, -0.2);
+  spotlight1.penumbra = 1;
+  const spotlight2 = new THREE.SpotLight(0xc548db, 3);
+  spotlight2.position.set(0.2, 0.3, -0.3);
+  spotlight2.penumbra = 1;
+  const spotlight3 = new THREE.SpotLight(0xfff459, 0.4);
+  spotlight3.position.set(-0.3, 0.2, 0.4)
+  const spotlight4 = new THREE.SpotLight(0x092eab);
+  spotlight4.position.set(-0.4, -0.3, 0.1)
+  const spotlight5 = new THREE.SpotLight(0xdb0bb9)
+  spotlight5.position.set(-0.12, -0.3, 0.2)
+  spotlight5.angle = THREE.MathUtils.degToRad(30);
+  return { spotlight1, spotlight2, spotlight3, spotlight4, spotlight5 };
+}
+
 function createScene() {
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog( 0xcccccc, 10, 15 );
@@ -253,6 +271,13 @@ class World {
       loop.updatables.push(icosahedron, dodecahedron, controls);
       loop.updatables2.push(icosahedron, torus, dodecahedron, sphere);
       scene.add(light, icosahedron, torus, dodecahedron, sphere, ambientlight);
+      const {spotlight1, spotlight2, spotlight3, spotlight4, spotlight5} = createSpotlights();
+      spotlight1.target = torus;
+      spotlight2.target = icosahedron;
+      spotlight3.target = torus;
+      spotlight4.target = dodecahedron;
+      spotlight5.target = dodecahedron;
+      scene.add(spotlight1, spotlight2, spotlight3, spotlight4, spotlight5);
       const resizer = new Resizer(container, camera, renderer);
     }
     async initial() {
