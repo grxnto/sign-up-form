@@ -19,7 +19,8 @@ function createIcosahedron() {
   icosahedron.update = (time) => {
     icosahedron.position.y = Math.cos( time ) * 0.02 + 0.2;
   };
-  
+  icosahedron.castShadow = true;
+  icosahedron.receiveShadow = false;
   
   return icosahedron;
 }
@@ -39,6 +40,8 @@ function createTorus() {
   torus.update = (time) => {
     torus.position.y = Math.cos( time ) * 0.03 + 0.2;
   };
+  torus.castShadow = true;
+  torus.receiveShadow = false;
   return torus;
 }
 
@@ -54,6 +57,8 @@ function createSphere() {
   sphere.update = (time) => {
     sphere.position.y = Math.sin( time ) * 0.02 + 0.2;
   };
+  sphere.castShadow = true;
+  sphere.receiveShadow = false;
   return sphere;
 }
 
@@ -77,6 +82,8 @@ function createDodecahedron() {
   dodecahedron.update = (time) => {
     dodecahedron.position.y = Math.sin( time ) * 0.03 - 0.17;
   };
+  dodecahedron.castShadow = true;
+  dodecahedron.receiveShadow = false;
   return dodecahedron;
 }
 
@@ -92,6 +99,8 @@ function createControls(camera, canvas) {
   controls.autoRotateSpeed = 1;
   controls.minDistance = 1.7;
   controls.maxDistance = 1.7;
+  controls.minPolarAngle = THREE.MathUtils.degToRad(60); // default
+  controls.maxPolarAngle = THREE.MathUtils.degToRad(120); // default
   controls.tick = () => controls.update();
 
   return controls;
@@ -108,6 +117,8 @@ async function loadModel() {
   globe.tick = (delta) => {
     globe.rotation.z += radiansPerSecond * delta;
   };
+  globe.castShadow = false;
+  globe.receiveShadow = true;
   return globe;
 }
 
@@ -128,16 +139,21 @@ function createCamera() {
 function createLights() {
     // Create a directional light
     const light = new THREE.DirectionalLight('white', 4);
-  
+    // enabling casting shadows
+    light.castShadow = true;
     // move the light right, up, and towards us
     light.position.set(8, 7, 10);
   
     return light;
 }
 
+function createAmbientLights() {
+  const ambientlight = new THREE.AmbientLight( 0x404040, 2.5 ); // soft white light
+  return ambientlight;
+}
 function createScene() {
     const scene = new THREE.Scene();
-  
+    scene.fog = new THREE.Fog( 0xcccccc, 10, 15 );
     scene.background = new THREE.Color('black');
   
     return scene;
@@ -145,6 +161,8 @@ function createScene() {
 
 function createRenderer() {
     const renderer = new THREE.WebGLRenderer({ antialias: true });
+    // setting type
+    renderer.shadowMap.enabled = true;
     return renderer;
 }
 
@@ -227,13 +245,14 @@ class World {
       container.append(renderer.domElement);
       const controls = createControls(camera, renderer.domElement);
       const light = createLights();
+      const ambientlight = createAmbientLights();
       const icosahedron = createIcosahedron();
       const torus = createTorus();
       const dodecahedron = createDodecahedron();
       const sphere = createSphere();
       loop.updatables.push(icosahedron, dodecahedron, controls);
       loop.updatables2.push(icosahedron, torus, dodecahedron, sphere);
-      scene.add(light, icosahedron, torus, dodecahedron, sphere);
+      scene.add(light, icosahedron, torus, dodecahedron, sphere, ambientlight);
       const resizer = new Resizer(container, camera, renderer);
     }
     async initial() {
