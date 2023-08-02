@@ -2,10 +2,10 @@ body {
     padding:0;
     margin:0;
     background-color: black;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 .body {
     display:flex;
-
 }
 #scene-container {
     width: 650px;
@@ -19,17 +19,131 @@ canvas {
     width: 100%;
 }
 #sign-up {
-    background-color: white;
+    /* background-color: rgb(19, 18, 18); */
+    background-color: black;
     height:100vh;
-    color:black;
     flex: 1;
+    border-left-style:solid;
+    border-left-width:1px;
+    border-left-color: rgba(255, 255, 255, 0.817);
+    display:flex;
+    flex-direction:column;
 }
-@media only screen and (max-width: 1000px) {
+form {
+    flex: 1;
+    display: flex;
+    flex-direction:column;
+}
+.footer {
+    width:auto;
+    height: 3em;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+}
+a {
+    font-size:0.7em;
+    color:whitesmoke;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-decoration:none;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+img {
+    width:2.2em;
+    height:2.2em;
+    transition: transform .7s ease-in-out;
+}
+img:hover {
+    transform: rotate(360deg);
+}
+h2 {
+    font-family: -apple-system-body, Helvetica, sans-serif;
+    color:whitesmoke;
+    font-size: 56px;
+    line-height: 1.07143;
+    font-weight: 600;
+    letter-spacing: -.005em;
+    margin-bottom:0px;
+}
+h3 {
+    font-family: -apple-system-body, Helvetica, sans-serif;
+    color:whitesmoke;
+    font-weight: 300;
+    line-height: 1.10722;
+    font-size: 20px;
+    letter-spacing: .004em;
+}
+.title, .description {
+    display: flex;
+    justify-content:center;
+    text-align: center;
+}
+.form {
+    flex:1;
+}
+fieldset {
+    border:none;
+    padding:0 0;
+    font-family: -apple-system-body, Helvetica, sans-serif;
+    color:rgb(231, 231, 231);
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top:3em;
+}
+.username, .email, .password, .confirm {
+    position:relative;
+    margin: 1em 0;
+}
+.form_input {
+    width:15em;
+    height:3em;
+    background-color:black;
+    border: 2px solid whitesmoke;
+    border-radius: 5px;
+    color:rgb(231, 231, 231);
+    outline:none;
+    padding:0 1.2em;
+    font-family: -apple-system-body, Helvetica, sans-serif;
+}
+.form_input:hover {
+    border-color:#42a1d4;
+}
+.form_input:focus {
+    border-color:#42a1d4;
+}
+.form_label {
+    position:absolute;
+    top:0.45em;
+    left:0.2em;
+    padding:0.3em 0.6em;
+    font-family: -apple-system-body, Helvetica, sans-serif;
+    color:rgb(231, 231, 231);
+    background-color:black;
+    border-radius:5px;
+    cursor:text;
+    pointer-events: none;
+    transition: top 200ms ease-in, left 200ms ease-in, font-size 200ms ease-in;
+}
+.form_input:focus ~ .form_label,
+.form_input:not(:placeholder-shown).form_input:not(:focus) ~ .form_label {
+  top: -0.5rem;
+  font-size: 0.8rem;
+  left: 0.8rem;
+}
+
+
+
+@media only screen and (max-width: 1200px) {
     .body {
       display:flex;
       flex-direction: column;
       height:100vh;
-      min-width: 400px;
+      min-width: 300px;
     }
     #scene-container {
         width: 100%;
@@ -41,6 +155,24 @@ canvas {
     }
     #sign-up {
         width:100%;
-        height:100%;
+        flex: 1;
+        border-left-style:none;
+        border-top-style:solid;
+        border-top-width:2px;
+        border-top-color: rgba(255, 255, 255, 0.817);
+    }
+    h2 {
+        margin-top:25px;
+        font-size:48px;
+    }
+    h3 {
+        margin-top:10px;
+        font-size:12px;
+    }
+    fieldset {
+        padding-top: 0;
+    }
+    .username, .email, .password, .confirm {
+        margin: 0.5em 0;
     }
 }
