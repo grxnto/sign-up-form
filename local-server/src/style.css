@@ -230,4 +230,7 @@ span {
     .username, .email, .password, .confirm {
         margin: 0.5em 0;
     }
+    .remember_me {
+        margin-bottom:0em;
+    }
 }
