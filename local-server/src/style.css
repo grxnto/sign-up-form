@@ -227,6 +227,9 @@ span {
         margin-top:10px;
         font-size:12px;
     }
+    .title {
+        margin: 0 0.5em;
+    }
     fieldset {
         padding-top: 0;
     }
@@ -235,5 +238,9 @@ span {
     }
     .remember_me {
         margin-bottom:0em;
+    }
+    .form_label {
+        top:0.42em;
+        font-size: 0.8em;
     }
 }
